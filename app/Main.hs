@@ -6,46 +6,45 @@ module Main where
 
 import           Control.Monad
 
-import           Data.Array
-import           Data.Bits
+import           Data.Char
 
--- import Data.List
--- import Data.List.Split
--- import Data.Set
--- import Debug.Trace
 import           System.Environment
 import           System.IO
 import           System.IO.Unsafe
 
--- -2 3 2 4 5
--- Complete the maxSubsetSum function below.
-maxSubsetSum :: [Int] -> Int
-maxSubsetSum = uncurry max . foldr f (0, 0)
+-- Complete the abbreviation function below.
+abbreviation :: String -> String -> String
+abbreviation a b = if abb a b then "YES" else "NO"
 
-f :: Int -> (Int, Int) -> (Int, Int)
-f n (p', p) = (max p' p, max n $ p' + n)
+abb :: String -> String -> Bool
+abb a  [] = all isLower a
+abb [] _  = False
+abb a b | ha == hb         = abb ta tb
+        | toUpper ha == hb = abb ta tb || abb ta b
+        | isUpper ha       = False
+        | otherwise        = abb ta b
+ where
+  ha : ta = a
 
-readMultipleLinesAsStringArray :: Int -> IO [String]
-readMultipleLinesAsStringArray 0 = return []
-readMultipleLinesAsStringArray n = do
-    line <- getLine
-    rest <- readMultipleLinesAsStringArray (n - 1)
-    return (line : rest)
+  hb : tb = b
+
 
 main :: IO ()
 main = do
-    stdout  <- getEnv "OUTPUT_PATH"
-    fptr    <- openFile stdout WriteMode
+    stdout <- getEnv "OUTPUT_PATH"
+    fptr   <- openFile stdout WriteMode
 
-    n       <- readLn :: IO Int
+    q      <- readLn :: IO Int
 
-    arrTemp <- getLine
+    forM_ [1 .. q] $ \q_itr -> do
+        a <- getLine
 
-    let arr = map (read :: String -> Int) . words $ arrTemp
+        b <- getLine
 
-    let res = maxSubsetSum arr
+        let result = abbreviation a b
 
-    hPutStrLn fptr $ show res
+        hPutStrLn fptr result
 
     hFlush fptr
     hClose fptr
+
