@@ -9,15 +9,17 @@ import           Control.Monad.ST
 
 import           Data.Char
 import           Data.HashTable.ST.Basic       as H
-import           Data.STRef
 import qualified Data.Text                     as T
+import qualified Data.Text.IO                  as T
+
+import           Debug.Trace
 
 import           System.Environment
 import           System.IO
 
 -- Complete the abbreviation function below.
-abbreviation :: String -> String -> String
-abbreviation a b = if abbM (T.pack a) (T.pack b) then "YES" else "NO"
+abbreviation :: T.Text -> T.Text -> T.Text
+abbreviation a b = if abbM a b then "YES" else "NO"
 
 abbM :: T.Text -> T.Text -> Bool
 abbM a b = runST $ do
@@ -56,19 +58,11 @@ abb a  b  m = do
 
 main :: IO ()
 main = do
-  stdout <- getEnv "OUTPUT_PATH"
-  fptr   <- openFile stdout WriteMode
+  q <- getLine
+  replicateM_ (read q) question
 
-  q      <- readLn :: IO Int
-
-  forM_ [1 .. q] $ \q_itr -> do
-    a <- getLine
-
-    b <- getLine
-
-    let result = abbreviation a b
-
-    hPutStrLn fptr result
-
-  hFlush fptr
-  hClose fptr
+question :: IO ()
+question = do
+  a <- T.getLine
+  b <- T.getLine
+  T.putStrLn $ abbreviation a b
