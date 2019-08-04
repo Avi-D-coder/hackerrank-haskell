@@ -1,12 +1,18 @@
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Main where
 
 import           Control.Monad
 
 import           Data.Char
+import qualified Data.Map.Strict               as M
+import           Data.MemoTrie
+import           Data.STRef
+import qualified Data.Text                     as T
+
+import           GHC.Generics                   ( Generic )
 
 import           System.Environment
 import           System.IO
@@ -19,10 +25,10 @@ abbreviation a b = if abb a b then "YES" else "NO"
 abb :: String -> String -> Bool
 abb a  [] = all isLower a
 abb [] _  = False
-abb a b | ha == hb         = abb ta tb
-        | toUpper ha == hb = abb ta tb || abb ta b
+abb a b | ha == hb         = memo2 abb ta tb
+        | toUpper ha == hb = memo2 abb ta tb || memo2 abb ta b
         | isUpper ha       = False
-        | otherwise        = abb ta b
+        | otherwise        = memo2 abb ta b
  where
   ha : ta = a
 

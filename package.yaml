@@ -24,6 +24,8 @@ dependencies:
 - array
 - split
 - containers
+- text
+- MemoTrie
 
 library:
   source-dirs: src
