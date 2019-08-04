@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 {-# OPTIONS_GHC -O2 #-}
 
 module Main where
@@ -7,13 +8,12 @@ import           Control.Monad
 import           Control.Monad.ST
 
 import           Data.Char
-import qualified Data.Map.Strict               as M
+import           Data.HashTable.ST.Basic       as H
 import           Data.STRef
 import qualified Data.Text                     as T
 
 import           System.Environment
 import           System.IO
-import           System.IO.Unsafe
 
 -- Complete the abbreviation function below.
 abbreviation :: String -> String -> String
@@ -21,19 +21,19 @@ abbreviation a b = if abbM (T.pack a) (T.pack b) then "YES" else "NO"
 
 abbM :: T.Text -> T.Text -> Bool
 abbM a b = runST $ do
-  m <- newSTRef M.empty
+  m <- H.newSized 100000
   abb a b m
 
-abb :: T.Text -> T.Text -> STRef s (M.Map (T.Text, T.Text) Bool) -> ST s Bool
+abb :: T.Text -> T.Text -> HashTable s (T.Text, T.Text) Bool -> ST s Bool
 abb a  "" _ = return $ T.all isLower a
 abb "" _  _ = return False
 abb a  b  m = do
-  mm <- readSTRef m
-  case M.lookup (a, b) mm of
+  l <- H.lookup m (a, b)
+  case l of
     Just memo -> return memo
     Nothing   -> do
       r <- recur
-      modifySTRef m $ M.insert (a, b) r
+      H.insert m (a, b) r
       recur
  where
   ha = T.head a

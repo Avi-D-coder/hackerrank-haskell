@@ -25,6 +25,7 @@ dependencies:
 - split
 - containers
 - text
+- hashtables
 
 library:
   source-dirs: src
