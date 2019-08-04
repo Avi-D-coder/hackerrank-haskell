@@ -13,8 +13,6 @@ import           Data.MemoTrie
 import           Data.STRef
 import qualified Data.Text                     as T
 
-import           GHC.Generics                   ( Generic )
-
 import           System.Environment
 import           System.IO
 import           System.IO.Unsafe
